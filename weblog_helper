@@ -2,15 +2,20 @@
 
 VAR=0
 
-while getopts "i:(ip)-h(help)-:" opt
+while getopts "i:(ip)-h(help)f:(file)-:" opt
 do
     case $opt in
-        h ) echo -e "Usage: weblog_helper [option] <ADDRESS>\n"; 
-            echo -e "Options:\n\n\t"
-            echo -e "\t-i --ip\t\tIP ADDRESS or CIDR ADDRESS\n";
-            echo -e "\t-h --help\tusage help\n";
+        h ) echo "Usage: weblog_helper [option] <ADDRESS> [option] <FILE>";
+            echo "Usage: weblog_helper [option] <ADDRESS>";
+            echo "";
+            echo "Options:"
+            echo "    -i --ip        IP ADDRESS or CIDR ADDRESS";
+            echo "    -f --file      Input file default: source.txt";
+            echo "    -h --help      Usage help";
+            exit;
             shift;;
-        i ) VAR=$2; shift;; 
+        i ) VAR=$2; shift;;
+        f ) FILE=$3;;
     esac
 done
 
@@ -20,6 +25,9 @@ REGEX_IPv4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
 IPCALC_NETWORK=`"$IPCALC" "$VAR" |grep 'Network' |awk '{print $2}'`
 IPCALC_ADDRESS=`"$IPCALC" "$VAR" |grep 'Address' | awk '{print $2}'`
 FILE=./source.txt
+if [ ! -f $FILE ];then
+    FILE=$3
+fi
 
 while read line
 do
