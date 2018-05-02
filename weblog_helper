@@ -42,16 +42,15 @@ else
 
     while read line
     do
-        if [[ "$VAR" =~ $REGEX_IPv4 ]] && [[ "$VAR" == "${VAR%/*}" ]]; then 
-            grep -w $VAR
-        else
-            [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK
+        if [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK && [[ "$VAR" == "$IPCALC_NETWORK" ]];then
             ip=`echo $line |awk '{print $1}'`
             var=`"$IPCALC" "$ip" |grep 'Network' |awk '{print $2}'`
             # if [[ "$network" == $var ]] && [[ "${network%/*}" == "$IPCALC_ADDRESS"  ]];then
             if [[ "$network" == $var ]];then
                 echo "$line" | grep "$ip"
             fi
+        elif [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK && [[ "$VAR" != ${IPCALC_NETWORK%/*} ]]; then 
+            grep -w $VAR
         fi
     done < "$FILE"
 
