@@ -1,18 +1,22 @@
 #!/bin/bash
 
+var=0
+
+while getopts "i:(ip)-h(help)-:" opt
+do
+    case $opt in
+        h ) echo -e "Usage: weblog_helper [option] <ADDRESS>\n"; 
+            echo -e "Options:\n\n\t"
+            echo -e "\t-i --ip\t\tIP ADDRESS or CIDR ADDRESS\n";
+            echo -e "\t-h --help\tusage help\n";
+            shift;;
+        i ) var=$2; shift;; 
+    esac
+done
+
 regex_ip4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
-# regex_ip_cidr_pattern='[0-9]{1,3}(?:\.[0-9]{1,3}){0,3}/[0-9]+'
+file=./source.txt
 
-# regex_ip4='(?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9])'
-
-
-#while IFS= read -r LINE;
-#do 
-#    echo $LINE | grep -qE $regex_ip_cidr_pattern
-#done < ./source.txt
-[ $# -lt 2 ] && echo "wrong number of args" && exit 1
-file=$1
-var=$2
 ipcalc_network=`ipcalc $var |grep 'Network' |awk '{print $2}'`
 while read line
 do
