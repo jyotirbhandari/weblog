@@ -32,7 +32,7 @@ fi
 while read line
 do
     if [[ "$VAR" =~ $REGEX_IPv4 ]] && [[ "$VAR" == "${VAR%/*}" ]]; then 
-        grep $VAR
+        grep -w $VAR
     else
         [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK
         ip=`echo $line |awk '{print $1}'`
