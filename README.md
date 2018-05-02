@@ -12,15 +12,18 @@ The weblog helper is a tool to filter ipaddress and ipaddress cidr for analyzing
 
 # Usage
 
-##General Command
+## General Command
 
 ``
+
 $ sh weblog_helper
+
 Usage: weblog_helper [option] <ADDRESS> [option] <FILE>
 Usage: weblog_helper [option] <ADDRESS>
+
 ``
 
-##Help Command
+## Help Command
 
 ``
 $ sh weblog_helper -h
@@ -33,7 +36,7 @@ Options:
     -h --help      Usage help
 ``
 
-##Applicable Command (with source.txt in PWD)
+## Applicable Command (with source.txt in PWD)
 
 Modify web server logs file to source.txt or rename FILE variable as per you requirement
 
@@ -41,7 +44,7 @@ Modify web server logs file to source.txt or rename FILE variable as per you req
 $ sh weblog_helper --ip 10.0.0.0/24
 ``
 
-##Applicable Command (with specific file in PWD)
+## Applicable Command (with specific file in PWD)
 
 You do not need to modify code at all, just use option ``-f`` or ``--file``
 

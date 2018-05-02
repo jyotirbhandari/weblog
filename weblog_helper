@@ -2,6 +2,12 @@
 
 VAR=0
 
+function usage() {
+    echo "Usage: weblog_helper [option] <ADDRESS> [option] <FILE>";
+    echo "Usage: weblog_helper [option] <ADDRESS>";
+    1>&2; exit 1;
+}
+
 while getopts "i:(ip)-h(help)f:(file)-:" opt
 do
     case $opt in
@@ -16,32 +22,37 @@ do
             shift;;
         i ) VAR=$2; shift;;
         f ) FILE=$3;;
+
     esac
 done
 
-
-IPCALC=$(which ipcalc)
-REGEX_IPv4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
-IPCALC_NETWORK=`"$IPCALC" "$VAR" |grep 'Network' |awk '{print $2}'`
-IPCALC_ADDRESS=`"$IPCALC" "$VAR" |grep 'Address' | awk '{print $2}'`
-FILE=./source.txt
-if [ ! -f $FILE ];then
-    FILE=$3
-fi
-
-while read line
-do
-    if [[ "$VAR" =~ $REGEX_IPv4 ]] && [[ "$VAR" == "${VAR%/*}" ]]; then 
-        grep -w $VAR
-    else
-        [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK
-        ip=`echo $line |awk '{print $1}'`
-        var=`"$IPCALC" "$ip" |grep 'Network' |awk '{print $2}'`
-        # if [[ "$network" == $var ]] && [[ "${network%/*}" == "$IPCALC_ADDRESS"  ]];then
-        if [[ "$network" == $var ]];then
-            echo "$line" | grep "$ip"
-        fi
+if [[ $1 == "" ]]; then
+    usage
+    exit;
+else
+    IPCALC=$(which ipcalc)
+    REGEX_IPv4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+    IPCALC_NETWORK=`"$IPCALC" "$VAR" |grep 'Network' |awk '{print $2}'`
+    IPCALC_ADDRESS=`"$IPCALC" "$VAR" |grep 'Address' | awk '{print $2}'`
+    FILE=./source.txt
+    if [ ! -f $FILE ];then
+        FILE=$3
     fi
-done < "$FILE"
 
 
+    while read line
+    do
+        if [[ "$VAR" =~ $REGEX_IPv4 ]] && [[ "$VAR" == "${VAR%/*}" ]]; then 
+            grep -w $VAR
+        else
+            [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK
+            ip=`echo $line |awk '{print $1}'`
+            var=`"$IPCALC" "$ip" |grep 'Network' |awk '{print $2}'`
+            # if [[ "$network" == $var ]] && [[ "${network%/*}" == "$IPCALC_ADDRESS"  ]];then
+            if [[ "$network" == $var ]];then
+                echo "$line" | grep "$ip"
+            fi
+        fi
+    done < "$FILE"
+
+fi
