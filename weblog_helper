@@ -1,6 +1,6 @@
 #!/bin/bash
 
-var=0
+VAR=0
 
 while getopts "i:(ip)-h(help)-:" opt
 do
@@ -10,25 +10,28 @@ do
             echo -e "\t-i --ip\t\tIP ADDRESS or CIDR ADDRESS\n";
             echo -e "\t-h --help\tusage help\n";
             shift;;
-        i ) var=$2; shift;; 
+        i ) VAR=$2; shift;; 
     esac
 done
 
-regex_ip4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
-file=./source.txt
 
-ipcalc_network=`ipcalc $var |grep 'Network' |awk '{print $2}'`
+IPCALC=$(which ipcalc)
+REGEX_IPv4='^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+IPCALC_NETWORK=`"$IPCALC" "$VAR" |grep 'Network' |awk '{print $2}'`
+IPCALC_ADDRESS=
+FILE=./source.txt
+
 while read line
 do
-    if [[ "$var" =~ $regex_ip4 ]] && network=$ipcalc_network;then
+    if [[ "$VAR" =~ $REGEX_IPv4 ]] && network=$IPCALC_NETWORK;then
         ip=`echo $line |awk '{print $1}'`
-        var=`/usr/local/bin/ipcalc "$ip" |grep 'Network' |awk '{print $2}'`
-        if [[ $network == $var ]];then
+        VAR=`"$IPCALC" "$ip" |grep 'Network' |awk '{print $2}'`
+        if [[ "$network" == "$VAR" ]];then
             echo "$line" | grep "$ip"
         fi
      else
          exit 0
     fi
-done < "$file"
+done < "$FILE"
 
 
